@@ -148,6 +148,10 @@ class MeeCleanCart_Admin {
 			 'query_var'          => true,
 			 'capability_type'    => 'post',
 			 'has_archive'        => true,
+			 'rewrite'						=> array(
+				 'with_front' => false,
+				 'slug' => 'products',
+				),
 			 'hierarchical'       => false,
 			 'menu_position'      => null,
 			 'supports'           => array( 'title' ),
@@ -198,7 +202,7 @@ class MeeCleanCart_Admin {
 					'label'   => __( 'Product Image', $this->plugin_name ),
 					'name'    => 'product_img',
 					'type'    => 'image',
-					'return_format' => 'array',
+					'return_format' => 'id',
 					'mime_types' => 'jpg, png, gif',
 				),
 				array(
@@ -216,7 +220,7 @@ class MeeCleanCart_Admin {
 					'type'     => 'repeater',
 					'button_label' => __( 'Add Option', $this->plugin_name ),
 					//'max'      => 1,
-					'min'      => 1,
+					'min'      => 0,
 					'layout'   => 'block',
 					'sub_fields'  => array(
 						array(

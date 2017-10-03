@@ -109,19 +109,19 @@ class MeeCleanCart_Public {
   * @return void
   */
   public function cc_add_shortcodes() {
-		add_shortcode('productform', 'display_product_form');
-		add_shortcode('producttitle', 'display_product_form');
-		add_shortcode('productimage', 'display_product_form');
-		add_shortcode('productdescription', 'display_product_form');
+		add_shortcode('productform', array( $this, 'display_product_form' ));
+		add_shortcode('producttitle', array( $this, 'display_product_title' ));
+		add_shortcode('productimage', array( $this, 'display_product_image' ));
+		add_shortcode('productdescription', array( $this, 'display_product_description' ));
 	}
 
 	/**
-  * Register product photo sizes.
+  * Display form to add product to cart.
   *
   * @since 1.0.0
   *
   * @author Will King
-  * @return void
+  * @return string Form to add product to cart
   */
 	function display_product_form($atts) {
 		$a = shortcode_atts( array(
@@ -131,10 +131,10 @@ class MeeCleanCart_Public {
 		$options = array();
 		if( have_rows('product_options', $a['product']) ) {
 			while ( have_rows('product_options', $a['product']) ) : the_row();
-				array_push($options, the_sub_field('option_name'));
+				array_push($options, get_sub_field('option_name'));
 			endwhile;
 		} else {
-			array_push($options, the_field('default_option', 'options'));
+			array_push($options, get_field('default_option', 'options'));
 		}
 
 		ob_start(); ?>
@@ -145,7 +145,7 @@ class MeeCleanCart_Public {
 					<label for="product_option"><?php the_field('option_label', 'options'); ?></label>
 					<select name ="product_option">
 						<?php foreach($options as $option) : ?>
-							<option value="<?php echo str_replace(' ', '-', strtolower($option)); ?>"><? echo $option; ?></option>
+							<option value="<?php echo str_replace(' ', '-', strtolower($option)); ?>"><?php echo $option; ?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -162,6 +162,64 @@ class MeeCleanCart_Public {
 		</div>
 		<?php $form = ob_get_contents();
 		ob_end_clean();
+		return $form;
 	}
+
+	/**
+  * Display form to add product to cart.
+  *
+  * @since 1.0.0
+  *
+  * @author Will King
+  * @return string Product Title
+  */
+	function display_product_title($atts) {
+		$a = shortcode_atts( array(
+			"product" => '123',
+		), $atts);
+		$title = '';
+		ob_start(); ?>
+		<h1><?php echo get_the_title($a['product']); ?></h1>
+		<?php $title = ob_get_contents();
+		ob_end_clean();
+		return $title;
+	}
+
+	/**
+	* Display product image.
+	*
+	* @since 1.0.0
+	*
+	* @author Will King
+	* @return string Product Image
+	*/
+	function display_product_image($atts) {
+		$a = shortcode_atts( array(
+			"product" => '123',
+		), $atts);
+		$image = '';
+		$image_src = get_field('product_img', $a['product']);
+		if ($image_src) {
+			$image = wp_get_attachment_image($image_src, 'product-l', array('class' => 'product__img'));
+		}
+		return $image;
+	}
+
+	/**
+  * Display product description.
+  *
+  * @since 1.0.0
+  *
+  * @author Will King
+  * @return string Product Description
+  */
+	function display_product_description($atts) {
+		$a = shortcode_atts( array(
+			"product" => '123',
+		), $atts);
+		$description = get_field('product_description', $a['product']);
+		return $description;
+	}
+
 
 }
