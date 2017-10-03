@@ -100,4 +100,68 @@ class MeeCleanCart_Public {
 
 	}
 
+	/**
+  * Register product photo sizes.
+  *
+  * @since 1.0.0
+  *
+  * @author Will King
+  * @return void
+  */
+  public function cc_add_shortcodes() {
+		add_shortcode('productform', 'display_product_form');
+		add_shortcode('producttitle', 'display_product_form');
+		add_shortcode('productimage', 'display_product_form');
+		add_shortcode('productdescription', 'display_product_form');
+	}
+
+	/**
+  * Register product photo sizes.
+  *
+  * @since 1.0.0
+  *
+  * @author Will King
+  * @return void
+  */
+	function display_product_form($atts) {
+		$a = shortcode_atts( array(
+			"product" => '123',
+		), $atts);
+		$form = '';
+		$options = array();
+		if( have_rows('product_options', $a['product']) ) {
+			while ( have_rows('product_options', $a['product']) ) : the_row();
+				array_push($options, the_sub_field('option_name'));
+			endwhile;
+		} else {
+			array_push($options, the_field('default_option', 'options'));
+		}
+
+		ob_start(); ?>
+		<div>
+			<form>
+				<div>
+					<div class="error-message"><?php the_field('error_message', 'options'); ?></div>
+					<label for="product_option"><?php the_field('option_label', 'options'); ?></label>
+					<select name ="product_option">
+						<?php foreach($options as $option) : ?>
+							<option value="<?php echo str_replace(' ', '-', strtolower($option)); ?>"><? echo $option; ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<div>
+					<label for="product_message"><?php the_field('message_label', 'options'); ?></label>
+					<textarea type="text" name ="product_message"></textarea>
+				</div>
+				<input type="submit" />
+			</form>
+			<div>
+				<h3><?php the_field('success_heading', 'options'); ?></h3>
+				<p><?php the_field('success_message', 'options'); ?></p>
+			</div>
+		</div>
+		<?php $form = ob_get_contents();
+		ob_end_clean();
+	}
+
 }
